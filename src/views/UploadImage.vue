@@ -179,7 +179,4 @@ export default {
 };
 </script>
 
-<style>
-.text-color-dms {
-}
-</style>
+<style></style>
