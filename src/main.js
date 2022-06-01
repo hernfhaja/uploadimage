@@ -1,12 +1,12 @@
 import Vue from "vue";
 import App from "./App.vue";
-import VueLazyload from "vue-lazyload";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
+import router from "./router";
+import "./index.css";
 
-Vue.use(VueLazyload);
 Vue.config.productionTip = false;
 
 const firebaseConfig = {
@@ -34,5 +34,6 @@ export default {
   storage,
 };
 new Vue({
+  router,
   render: (h) => h(App),
 }).$mount("#app");

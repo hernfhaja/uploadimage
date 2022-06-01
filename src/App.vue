@@ -1,31 +1,21 @@
 <template>
-  <div id="app">
-    <UploadImage />
+  <div
+    id="app "
+    class="bg-cover bg-gradient-to-l from-cyan-200 to-blue-400 ... absolute top-0 right-0 bottom-0 left-0 p-5"
+  >
+    <div id="nav" class="" style="display: none">
+      <router-link to="/">upload</router-link> |
+      <router-link to="/download">download</router-link>
+    </div>
+    <router-view />
   </div>
 </template>
 
 <script>
-import UploadImage from "./components/UploadImage";
-
 export default {
   name: "App",
-  components: {
-    UploadImage,
-  },
-  data() {
-    return {};
-  },
-  methods: {},
+  components: {},
 };
 </script>
 
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>

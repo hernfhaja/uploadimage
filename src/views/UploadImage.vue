@@ -1,37 +1,77 @@
 <template>
   <div class="uploadImage">
     <!-- popup -->
-    <div id="popup" class="popup" :style="{ display: popupData.display }">
-      <h3>ส่งสำเร็จ</h3>
-      <button @click="reloadPage">กด ส่งอีกรูป</button>
+    <div
+      v-if="uploadValue == 100"
+      class="bg-slate-800 bg-opacity-50 flex justify-center items-center absolute top-0 right-0 bottom-0 left-0 p-5"
+    >
+      <div class="bg-white px-10 py-10 rounded-md text-center">
+        <h1 class="text-xl mb-4 font-bold text-gray-600">ส่งรูปสำเร็จ</h1>
+        <p class="mb-5 text-gray-600">
+          ร่วมสวดธรรมจักรทุกวัน และ ร่วมพิธีอุทิศบุญในทุกวันพระ ได้ที่
+          เพจธรรมล้านดวง เวลา 20.02 น.
+        </p>
+        <button
+          @click="reloadPage"
+          class="bg-indigo-500 px-4 py-2 rounded-md text-md text-white"
+        >
+          ส่งรูปอีกครั้ง
+        </button>
+      </div>
     </div>
 
-    <!-- uploadimage -->
-    <div class="text-3xl font-bold underline">
-      <h1>ส่งรูป ผู้ร่วงลับ</h1>
-      <div class="div-uploadImage">
-        เลือกรูปภาพ
+    <!-- topic -->
+    <div class="shadow-xl flex flex-col justify-center mt-10 p-3 rounded-xl">
+      <h1 class="drop-shadow-xl text-4xl text-center text-yellow-300">
+        ส่งรูป พิธีอุทิศบุญ
+      </h1>
+      <h1 class="text-3xl text-color-dms text-center outline-title">
+        เพจธรรมล้านดวง
+      </h1>
+    </div>
+
+    <!-- input file -->
+    <div class="pt-20 flex flex-col justify-center">
+      <p class="text-center">กรุณากดที่ปุ่ม เพื่อเลือกรูป</p>
+      <div class="pt-3 flex justify-center">
         <input
           id="uploadImage"
-          class="input-uploadImage"
+          class="px-20 justify-self-center pt-1 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-100 file:text-yellow-800 hover:file:bg-yellow-100"
           type="file"
           @change="previewImage"
           accept="image/*"
+          style="content: 'test'"
         />
       </div>
     </div>
-    <img id="uploadPreview" class="uploadPreview" />
-    <div v-if="imageData != null">
-      <p>
-        ดำเนินการ: {{ uploadValue.toFixed() + "%" }}
-        <progress id="progress" :value="uploadValue" max="100"></progress>
+
+    <div class="flex flex-col justify-center">
+      <img id="uploadPreview" class="pt-10 px-3" />
+      <div v-if="imageData != null" class="flex justify-center">
+        <button
+          @click="onUpload"
+          class="p-3 shadow-xl mt-10 font-bold text-xl text-yellow-700 bg-yellow-200 rounded-full"
+        >
+          กดส่งรูปภาพ
+        </button>
+      </div>
+    </div>
+
+    <div v-if="imageData != null" class="flex flex-row justify-center pt-10">
+      <p v-if="imageData != 100" class="text-xs shadow-xl">
+        {{ !sendcomplete ? progress.incomplete : progress.complete }} :
+        {{ uploadValue.toFixed() + "%" }}
+        <progress
+          id="progress"
+          class="rounded-full"
+          :value="uploadValue"
+          max="100"
+        ></progress>
       </p>
-      <br />
-      <button @click="onUpload" class="button-sendImage">ส่งภาพ</button>
     </div>
   </div>
 </template>
-<script src="https://cdn.tailwindcss.com"></script>
+
 <script>
 import {
   getStorage,
@@ -52,6 +92,9 @@ export default {
       popupData: {
         display: "none",
       },
+      clicksend: null,
+      progress: { incomplete: "ดำเนินการ", complete: "ส่งรูปสำเร็จ" },
+      sendcomplete: null,
     };
   },
 
@@ -69,9 +112,8 @@ export default {
       this.imageData = event.target.files[0];
     },
 
-    onUpload() {
+    onUpload(e) {
       const file = this.imageData;
-
       const storage = this.storage;
       const storageRef = ref(storage, `${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file, metadata);
@@ -79,6 +121,8 @@ export default {
       const metadata = {
         contentType: "image/jpeg",
       };
+
+      this.clicksend = e;
 
       uploadTask.on(
         "state_changed",
@@ -122,18 +166,11 @@ export default {
           // Upload completed successfully, now we can get the download URL
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log("File available at", downloadURL);
+            this.sendcomplete = 1;
             this.picture = downloadURL;
           });
         }
       );
-
-      this.openpopup();
-    },
-    openpopup() {
-      this.popupData.display = "block";
-    },
-    closeFunction() {
-      this.popupData.display = "none";
     },
     reloadPage() {
       window.location.reload();
@@ -143,55 +180,7 @@ export default {
 </script>
 
 <style>
-img.preview {
-  width: 200px;
-}
-
-.div-uploadImage {
-  padding: 5px 10px;
-  background: #00ad2d;
-  border: 1px solid #00ad2d;
-  position: relative;
-  color: #fff;
-  border-radius: 2px;
-  text-align: center;
-  float: center;
-  cursor: pointer;
-}
-
-.input-uploadImage {
-  position: absolute;
-  z-index: 1000;
-  opacity: 0;
-  cursor: pointer;
-  right: 0;
-  top: 0;
-  height: 100%;
-  font-size: 24px;
-  width: 100%;
-}
-
-.uploadPreview {
-  padding: 10px;
-  width: 500px;
-}
-
-.button-sendImage {
-  background: #00ad2d;
-}
-
-#popup {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: absolute;
-  width: 30%;
-  height: 10%;
-  top: 35%;
-  border: black;
-  left: 30%;
-  background-color: rgba(241, 215, 173);
-  border-radius: 5px;
+.text-color-dms {
+  color: ;
 }
 </style>
