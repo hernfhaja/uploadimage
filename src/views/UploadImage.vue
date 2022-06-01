@@ -181,6 +181,5 @@ export default {
 
 <style>
 .text-color-dms {
-  color: ;
 }
 </style>
