@@ -5,7 +5,6 @@
   >
     <div id="nav" class="" style="display: none">
       <router-link to="/">upload</router-link> |
-      <router-link to="/download">download</router-link>
     </div>
     <router-view />
   </div>

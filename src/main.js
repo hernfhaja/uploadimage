@@ -33,6 +33,7 @@ export default {
   auth,
   storage,
 };
+
 new Vue({
   router,
   render: (h) => h(App),
